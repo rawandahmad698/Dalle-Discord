@@ -1,0 +1,11 @@
+# Discord
+discord_token: not-my-token
+dall_e_generated_folder: "generated"
+bot_prefix: "!"
+embed_title: "DALL·E mini"
+embed_color: 0x00ff00
+
+# Embed
+default_image: https://cdn.discordapp.com/avatars/628005829840470037/8286685de0f2d7d94d94e020caf3265d.png?size=256
+webhook_url: https://discord.com/api/webhooks/931601771086876723/h8mymwDlS7n849zEbjQHM1vbAAYghDvm4zrubWxU6Y2FpyrpUNLUE86RN6myjKME6EOk
+icon_url: "https://cdn.discordapp.com/avatars/628005829840470037/8286685de0f2d7d94d94e020caf3265d.png?size=128"
