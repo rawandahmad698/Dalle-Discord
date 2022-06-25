@@ -24,10 +24,10 @@ How to use?
 -------------
 
 
-```python
+```text
 # Pretty simple. Just call the command 
-!dalle <query> 
 
+!dalle <query> 
 e.g: !dalle Cats just won the super bown
 ```
 
