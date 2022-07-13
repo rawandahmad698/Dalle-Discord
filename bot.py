@@ -137,7 +137,15 @@ class DallEDiscordBot(commands.Bot):
 
                     img_draw = ImageDraw.Draw(new_im)
                     fnt = ImageFont.truetype("./FiraMono-Medium.ttf", font_size)
-                    img_draw.text((0, 0), query, font=fnt, fill=(255, 255, 255))
+                    img_draw.text((1, 0), query, font=fnt, fill=(0, 0, 0))
+                    img_draw.text((0, 1), query, font=fnt, fill=(0, 0, 0))
+                    img_draw.text((1, 2), query, font=fnt, fill=(0, 0, 0))
+                    img_draw.text((2, 1), query, font=fnt, fill=(0, 0, 0))
+                    img_draw.text((0, 0), query, font=fnt, fill=(0, 0, 0))
+                    img_draw.text((0, 2), query, font=fnt, fill=(0, 0, 0))
+                    img_draw.text((2, 0), query, font=fnt, fill=(0, 0, 0))
+                    img_draw.text((2, 2), query, font=fnt, fill=(0, 0, 0))
+                    img_draw.text((1, 1), query, font=fnt, fill=(255, 255, 255))
                     new_im.save("./generated/art.png")
 
                     file = discord.File("./generated/art.png", filename="art.png")
