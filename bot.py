@@ -4,6 +4,7 @@ from Classes import Dalle
 # Builtin
 import asyncio
 import os
+from PIL import Image, ImageDraw, ImageFont
 from pathlib import Path
 from typing import Union
 
@@ -98,39 +99,63 @@ class DallEDiscordBot(commands.Bot):
         async def execute(ctx, *, query) -> None:
             # Check if query is empty
             if not query:
-                await ctx.send("DALL·E: Invalid query\nPlease enter a query (e.g !dalle dogs on space).")
+                await ctx.message.reply("DALL·E: Invalid query\nPlease enter a query (e.g !dalle dogs on space).")
                 return
 
             # Check if query is too long
             if len(query) > 100:
-                await ctx.send("DALL·E: Invalid query\nQuery is too long.")
+                await ctx.message.reply("DALL·E: Invalid query\nQuery is too long.")
                 return
 
             print(f"[-] {ctx.author} called !dalle {query}")
 
-            await ctx.send("```DALL·E mini query: " + query + "```")
-            await ctx.send("Generating images via DALL·E mini, this may take up to 2 minutes...")
-
+            message = await ctx.message.reply("Generating DALL·E mini query (this make take up to 2 minutes): ```" + query + "```")
+            
             try:
                 dall_e = await Dalle.DallE(prompt=f"{query}", author=f"{ctx.author.id}")
                 generated = await dall_e.generate()
 
                 if len(generated) > 0:
                     embed = self.create_embed(ctx.guild)
-                    await ctx.send(embed=embed)
 
-                    for image in generated:
-                        file = discord.File(image.path, filename=image.image_name)
-                        await ctx.send(file=file)
+                    first_image = Image.open(generated[0].path)
+
+                    width = first_image.width
+                    height = first_image.height
+                    font_size = 24
+                    spacing = 16
+                    text_height = font_size + spacing
+                    new_im = Image.new('RGBA', (width * 3 + spacing * 2, height * 3 + spacing * 2 + text_height), (0, 0, 0, 0))
+
+                    index = 0
+                    for i in range(0, 3):
+                        for j in range(0, 3):
+                            im = Image.open(generated[index].path)
+                            im.thumbnail((width, height))
+                            new_im.paste(im, (i * (width + spacing), text_height + j * (height + spacing)))
+                            index += 1
+
+                    img_draw = ImageDraw.Draw(new_im)
+                    fnt = ImageFont.truetype("./FiraMono-Medium.ttf", font_size)
+                    img_draw.text((0, 0), query, font=fnt, fill=(255, 255, 255))
+                    new_im.save("./generated/art.png")
+
+                    file = discord.File("./generated/art.png", filename="art.png")
+                    await message.delete()
+                    await ctx.message.reply(file=file)
+                    
 
             except Dalle.DallENoImagesReturned:
-                await ctx.send(f"DALL·E mini api returned no images found for {query}.")
+                await ctx.message.reply(f"DALL·E mini api returned no images found for {query}.")
             except Dalle.DallENotJson:
-                await ctx.send("DALL·E API Serialization Error, please try again later.")
+                await ctx.message.reply("DALL·E API Serialization Error, please try again later.")
             except Dalle.DallEParsingFailed:
-                await ctx.send("DALL·E Parsing Error, please try again later.")
+                await ctx.message.reply("DALL·E Parsing Error, please try again later.")
             except Dalle.DallESiteUnavailable:
-                await ctx.send("DALL·E API Error, please try again later.")
+                await ctx.message.reply("DALL·E API Error, please try again later.")
+            except Exception as e:
+                await ctx.message.reply("We were peepee poopoo at coding :(")
+                await ctx.message.reply(repr(e))
             finally:
                 # Delete the author folder in ./generated with author id, if exists
                 del_dir(f"./generated/{ctx.author.id}")
@@ -142,7 +167,7 @@ class DallEDiscordBot(commands.Bot):
             :param ctx:
             :return:
             """
-            await ctx.send("Pong!")
+            await ctx.message.reply("Pong!")
 
         @self.command(name="dallehelp", description="Shows the help menu.")
         async def help_command(ctx) -> None:
@@ -151,7 +176,7 @@ class DallEDiscordBot(commands.Bot):
             :param ctx:
             :return:
             """
-            await ctx.send("""
+            await ctx.message.reply("""
             **Commands**:
                 !dallehelp - shows this message
                 !ping - pong!
