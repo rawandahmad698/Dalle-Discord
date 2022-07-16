@@ -34,6 +34,20 @@ e.g: !dalle Cats just won the super bown
 
 That's it!
 
+Example (thanks to @Cosmin96 for the collage):
+
+[![py-Discord.png](Assets/img.png)](https://postimg.cc/TpGJwp0j)
+
 Support
 ----
 You may report bugs, ask for help, and discuss various other issues on the issues page.
+Discord: Rawa.#7438
+
+Change Log
+----------
+Version 1.0.1:
+  - Images are sent in a collage.
+  - Cleanup for collage added.
+
+Version 1.0.0:
+  - Initial release.

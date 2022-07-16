@@ -20,7 +20,6 @@ from discord.ext import commands
 with open("data.yaml") as f:
     c = yaml.safe_load(f)
 
-
 # If windows, set policy
 if os.name == 'nt':
     policy = asyncio.WindowsSelectorEventLoopPolicy()
@@ -93,6 +92,38 @@ class DallEDiscordBot(commands.Bot):
         print("Made with ❤️ by Rawand Ahmed Shaswar in Kurdistan")
         print("Bot is online!\nCall !dalle <query>")
 
+    @staticmethod
+    async def _create_collage(ctx, query: str, source_image: Image, images: list) -> str:
+        width = source_image.width
+        height = source_image.height
+        font_size = 30
+        spacing = 16
+        text_height = font_size + spacing
+        new_im = Image.new('RGBA', (width * 3 + spacing * 2, height * 3 + spacing * 2 + text_height),
+                           (0, 0, 0, 0))
+
+        index = 0
+        for i in range(0, 3):
+            for j in range(0, 3):
+                im = Image.open(images[index].path)
+                im.thumbnail((width, height))
+                new_im.paste(im, (i * (width + spacing), text_height + j * (height + spacing)))
+                index += 1
+
+        img_draw = ImageDraw.Draw(new_im)
+        fnt = ImageFont.truetype("./FiraMono-Medium.ttf", font_size)
+        img_draw.text((1, 0), query, font=fnt, fill=(0, 0, 0))
+        img_draw.text((0, 1), query, font=fnt, fill=(0, 0, 0))
+        img_draw.text((1, 2), query, font=fnt, fill=(0, 0, 0))
+        img_draw.text((2, 1), query, font=fnt, fill=(0, 0, 0))
+        img_draw.text((0, 0), query, font=fnt, fill=(0, 0, 0))
+        img_draw.text((0, 2), query, font=fnt, fill=(0, 0, 0))
+        img_draw.text((2, 0), query, font=fnt, fill=(0, 0, 0))
+        img_draw.text((2, 2), query, font=fnt, fill=(0, 0, 0))
+        img_draw.text((1, 1), query, font=fnt, fill=(255, 255, 255))
+        new_im.save(f"./generated/{ctx.author.id}/art.png")
+        return f"./generated/{ctx.author.id}/art.png"
+
     def add_commands(self) -> None:
 
         @self.command(name="dalle", description="Generate dall-e images using your query.")
@@ -109,49 +140,23 @@ class DallEDiscordBot(commands.Bot):
 
             print(f"[-] {ctx.author} called !dalle {query}")
 
-            message = await ctx.message.reply("Generating DALL·E mini query (this make take up to 2 minutes): ```" + query + "```")
-            
+            message = await ctx.message.reply("Generating DALL·E mini query (this make take up to 2 minutes):"
+                                              " ```" + query + "```")
+
             try:
                 dall_e = await Dalle.DallE(prompt=f"{query}", author=f"{ctx.author.id}")
                 generated = await dall_e.generate()
 
                 if len(generated) > 0:
-                    embed = self.create_embed(ctx.guild)
-
                     first_image = Image.open(generated[0].path)
+                    generated_collage = await self._create_collage(ctx, query, first_image, generated)
 
-                    width = first_image.width
-                    height = first_image.height
-                    font_size = 24
-                    spacing = 16
-                    text_height = font_size + spacing
-                    new_im = Image.new('RGBA', (width * 3 + spacing * 2, height * 3 + spacing * 2 + text_height), (0, 0, 0, 0))
-
-                    index = 0
-                    for i in range(0, 3):
-                        for j in range(0, 3):
-                            im = Image.open(generated[index].path)
-                            im.thumbnail((width, height))
-                            new_im.paste(im, (i * (width + spacing), text_height + j * (height + spacing)))
-                            index += 1
-
-                    img_draw = ImageDraw.Draw(new_im)
-                    fnt = ImageFont.truetype("./FiraMono-Medium.ttf", font_size)
-                    img_draw.text((1, 0), query, font=fnt, fill=(0, 0, 0))
-                    img_draw.text((0, 1), query, font=fnt, fill=(0, 0, 0))
-                    img_draw.text((1, 2), query, font=fnt, fill=(0, 0, 0))
-                    img_draw.text((2, 1), query, font=fnt, fill=(0, 0, 0))
-                    img_draw.text((0, 0), query, font=fnt, fill=(0, 0, 0))
-                    img_draw.text((0, 2), query, font=fnt, fill=(0, 0, 0))
-                    img_draw.text((2, 0), query, font=fnt, fill=(0, 0, 0))
-                    img_draw.text((2, 2), query, font=fnt, fill=(0, 0, 0))
-                    img_draw.text((1, 1), query, font=fnt, fill=(255, 255, 255))
-                    new_im.save("./generated/art.png")
-
-                    file = discord.File("./generated/art.png", filename="art.png")
-                    await message.delete()
+                    # Prepare the attachment
+                    file = discord.File(generated_collage, filename="art.png")
                     await ctx.message.reply(file=file)
-                    
+
+                    # Delete the message
+                    await message.delete()
 
             except Dalle.DallENoImagesReturned:
                 await ctx.message.reply(f"DALL·E mini api returned no images found for {query}.")
@@ -162,7 +167,7 @@ class DallEDiscordBot(commands.Bot):
             except Dalle.DallESiteUnavailable:
                 await ctx.message.reply("DALL·E API Error, please try again later.")
             except Exception as e:
-                await ctx.message.reply("We were peepee poopoo at coding :(")
+                await ctx.message.reply("Internal Error, please try again later.")
                 await ctx.message.reply(repr(e))
             finally:
                 # Delete the author folder in ./generated with author id, if exists
