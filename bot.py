@@ -26,7 +26,7 @@ if os.name == 'nt':
     asyncio.set_event_loop_policy(policy)
 
 # Enforced intents.
-bot_intents = discord.Intents(messages=True, guilds=True)
+bot_intents = discord.Intents.all()
 
 def del_dir(target: Union[Path, str], only_if_empty: bool = False):
     """
@@ -58,7 +58,7 @@ class DallEDiscordBot(commands.Bot):
     """
 
     def __init__(self, command_prefix, self_bot) -> None:
-        commands.Bot.__init__(self, command_prefix=command_prefix, self_bot=self_bot intents=bot_intents)
+        commands.Bot.__init__(self, command_prefix=command_prefix, self_bot=self_bot, intents=bot_intents)
         self.add_commands()
 
     def create_embed(self, guild) -> Embed:
