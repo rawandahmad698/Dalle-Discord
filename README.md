@@ -20,6 +20,16 @@ DALL·E mini as a discord bot. Use `!help` to see the commands.
 [Features]: https://Python-Markdown.github.io#Features
 [Available Extensions]: https://Python-Markdown.github.io/extensions
 
+Docker installation
+-------------
+
+Add your bot token to the docker-compose.yml file (this will override the bot token in data.yaml), then build and run with docker-compose:
+
+```
+docker-compose build
+docker-compose up -d
+```
+
 How to use?
 -------------
 
