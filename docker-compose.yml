@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  dalle-discord:
+    build:
+      context: .
+    environment:
+      - DISCORD_BOT_TOKEN=
+    restart: always
