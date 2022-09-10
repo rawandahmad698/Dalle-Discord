@@ -20,6 +20,9 @@ from discord.ext import commands
 with open("data.yaml") as f:
     c = yaml.safe_load(f)
 
+if os.environ.get('DISCORD_BOT_TOKEN') is not None:
+    c['discord_token'] = os.environ.get('DISCORD_BOT_TOKEN')
+    
 # If windows, set policy
 if os.name == 'nt':
     policy = asyncio.WindowsSelectorEventLoopPolicy()
