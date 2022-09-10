@@ -29,7 +29,7 @@ if os.name == 'nt':
     asyncio.set_event_loop_policy(policy)
 
 # Enforced intents.
-bot_intents = discord.Intents(messages=True, guilds=True)
+bot_intents = discord.Intents.all()
 
 def del_dir(target: Union[Path, str], only_if_empty: bool = False):
     """
