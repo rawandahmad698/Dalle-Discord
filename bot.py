@@ -61,7 +61,7 @@ class DallEDiscordBot(commands.Bot):
     """
 
     def __init__(self, command_prefix, self_bot) -> None:
-        commands.Bot.__init__(self, command_prefix=command_prefix, self_bot=self_bot intents=bot_intents)
+        commands.Bot.__init__(self, command_prefix=command_prefix, self_bot=self_bot, intents=bot_intents)
         self.add_commands()
 
     def create_embed(self, guild) -> Embed:
