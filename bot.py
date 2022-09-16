@@ -19,12 +19,9 @@ from discord.ext import commands
 """ Load the configuration file """
 with open("data.yaml") as f:
     c = yaml.safe_load(f)
-
+    
 if os.environ.get('DISCORD_BOT_TOKEN') is not None:
     c['discord_token'] = os.environ.get('DISCORD_BOT_TOKEN')
-
-# Token variable for new d
-bot_token = c['discord_token']
 
 # If windows, set policy
 if os.name == 'nt':
@@ -94,11 +91,11 @@ class DallEDiscordBot(commands.Bot):
     @staticmethod
     async def on_ready() -> None:
         """
-        When the bot is ready.
+        When the bot is ready
         :return:
         """
         print("Made with ❤️ by Rawand Ahmed Shaswar in Kurdistan")
-        print("Bot is online!\nCall !dalle <query>")
+        print("Bot is online! Send requests with:\n", c['bot_prefix'], "dalle <query>")
 
     @staticmethod
     async def _create_collage(ctx, query: str, source_image: Image, images: list) -> str:
@@ -143,12 +140,12 @@ class DallEDiscordBot(commands.Bot):
 
             # Check if query is too long
             if len(query) > 100:
-                await ctx.message.reply("DALL·E: Invalid query\nQuery is too long.")
+                await ctx.message.reply("DALL·E: Invalid query\nQuery is too long! (Max length: 100 chars)")
                 return
 
-            print(f"[-] {ctx.author} called !dalle {query}")
+            print(f"[-] {ctx.author} asked to draw {query}")
 
-            message = await ctx.message.reply("Generating DALL·E mini query (this make take up to 2 minutes):"
+            message = await ctx.message.reply("Generating {ctx.author}'s query (this may take up to 2 minutes):"
                                               " ```" + query + "```")
 
             try:
@@ -167,7 +164,7 @@ class DallEDiscordBot(commands.Bot):
                     await message.delete()
 
             except Dalle.DallENoImagesReturned:
-                await ctx.message.reply(f"DALL·E mini api returned no images found for {query}.")
+                await ctx.message.reply("DALL·E Mini API had no images for {query}.")
             except Dalle.DallENotJson:
                 await ctx.message.reply("DALL·E API Serialization Error, please try again later.")
             except Dalle.DallEParsingFailed:
@@ -199,9 +196,9 @@ class DallEDiscordBot(commands.Bot):
             """
             await ctx.message.reply("""
             **Commands**:
-                !dallehelp - shows this message
-                !ping - pong!
-                !dalle <query> - makes a request to the dall-e api and returns the result
+                {c['bot_prefix']}dallehelp - shows this message
+                {c['bot_prefix']}ping - pong!
+                {c['bot_prefix']}dalle <query> - makes a request to the dall-e api and returns the result
             """)
 
 
@@ -220,6 +217,6 @@ bot = DallEDiscordBot(command_prefix=c['bot_prefix'], self_bot=False)
 async def main():
     async with bot:
         bot.loop.create_task(background_task())
-        await bot.start(bot_token)
+        await bot.start(c['discord_token'])
 
 asyncio.run(main())
