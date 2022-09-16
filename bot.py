@@ -22,7 +22,10 @@ with open("data.yaml") as f:
 
 if os.environ.get('DISCORD_BOT_TOKEN') is not None:
     c['discord_token'] = os.environ.get('DISCORD_BOT_TOKEN')
-    
+
+# Token variable for new d
+bot_token = c['discord_token']
+
 # If windows, set policy
 if os.name == 'nt':
     policy = asyncio.WindowsSelectorEventLoopPolicy()
@@ -209,7 +212,14 @@ async def background_task() -> None:
     """
     pass
 
-
+# old function, broken by changes to `discord.py'
 bot = DallEDiscordBot(command_prefix=c['bot_prefix'], self_bot=False)
-bot.loop.create_task(background_task())
-bot.run(c['discord_token'])
+#bot.loop.create_task(background_task())
+#bot.run(c['discord_token'])
+
+async def main():
+    async with bot:
+        bot.loop.create_task(background_task())
+        await bot.start(bot_token)
+
+asyncio.run(main())
