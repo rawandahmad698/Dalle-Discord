@@ -30,23 +30,31 @@ docker-compose build
 docker-compose up -d
 ```
 
-How to use?
+How do I request?
 -------------
 
-
+Pretty simple. Just type in:
 ```text
-# Pretty simple. Just call the command 
-
 !dalle <query> 
-e.g: !dalle Cats just won the super bown
+e.g: !dalle Cats just won the super bowl
 ```
-
-
-That's it!
+That's it! There's an option in the `data.yaml` config file to change the prefix if you so desire. If you do so, the above command's `!` will change to exactly whatever you set in the `bot_prefix` line.
 
 Example (thanks to @Cosmin96 for the collage):
 
 [![py-Discord.png](Assets/img.png)](https://postimg.cc/TpGJwp0j)
+
+Can I use emotes in the prefix?
+--------
+Yes you can! To put an emote in the `bot_prefix` line:
+
+1. Pull up your Discord client.
+2. Type a backslash and then the emote that you want to use. (i.e. `\:haha:`)
+3. Hit Return. The emote's ID should be sent as a message.
+4. Copy that ID (in its entirety, do not drop the <> tags).
+5. Paste it into the `bot_prefix` line in your `data.yaml` config file.
+6. All done! You should be able to type your emote then your query.
+
 
 Support
 ----
