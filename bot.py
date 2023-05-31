@@ -145,7 +145,7 @@ class DallEDiscordBot(commands.Bot):
 
             print(f"[-] {ctx.author} asked to draw {query}")
 
-            message = await ctx.message.reply("Generating {ctx.author}'s query (this may take up to 2 minutes):"
+            message = await ctx.message.reply("Generating your query (this may take 1 or 2 minutes):"
                                               " ```" + query + "```")
 
             try:
@@ -164,7 +164,7 @@ class DallEDiscordBot(commands.Bot):
                     await message.delete()
 
             except Dalle.DallENoImagesReturned:
-                await ctx.message.reply("DALL·E Mini API had no images for {query}.")
+                await ctx.message.reply("Sorry! DALL·E Mini couldn't think of anything for {query}.")
             except Dalle.DallENotJson:
                 await ctx.message.reply("DALL·E API Serialization Error, please try again later.")
             except Dalle.DallEParsingFailed:
@@ -172,7 +172,7 @@ class DallEDiscordBot(commands.Bot):
             except Dalle.DallESiteUnavailable:
                 await ctx.message.reply("DALL·E API Error, please try again later.")
             except Exception as e:
-                await ctx.message.reply("Internal Error, please try again later.")
+                await ctx.message.reply("Internal Error! please try again later.")
                 await ctx.message.reply(repr(e))
             finally:
                 # Delete the author folder in ./generated with author id, if exists
